@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,OAAO;EACL,gBAAgB,EAAE,UAAU",
+"sources": ["circle0.component.sass"],
+"names": [],
+"file": "circle0.component.css"
+}
