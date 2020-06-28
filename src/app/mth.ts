@@ -23,4 +23,35 @@ export class Mth {
     return Math.cos(radian) * radius;
   }
 
+  static projection(coord: Coord2d, vect: Coord2d): Coord2d {
+    const uv = this.unit(vect);
+    const scalarProjection = this.dotProduct(coord, uv);
+    const vectorProjection = this.mult(uv, scalarProjection);
+    return vectorProjection;
+  }
+
+  static norm(vec: Coord2d): number {
+    return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
+  }
+
+  static unit(vec: Coord2d): Coord2d {
+    const n = this.norm(vec);
+    return { x: vec.x / n, y: vec.y / n };
+  }
+
+  static dotProduct(v1: Coord2d, v2: Coord2d): number {
+    return v1.x * v2.x + v1.y * v2.y;
+  }
+
+  private static mult(coord: Coord2d, scalar: number): Coord2d {
+    return { x: coord.x * scalar, y: coord.y * scalar};
+  }
+
+  static minus(c1: Coord2d, c2: Coord2d): Coord2d {
+    return {x: c1.x - c2.x, y: c1.y - c2.y};
+  }
+
+  static plus(c1: Coord2d, c2: Coord2d): Coord2d {
+    return {x: c1.x + c2.x, y: c1.y + c2.y};
+  }
 }

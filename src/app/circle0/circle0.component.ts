@@ -20,11 +20,13 @@ export class Circle0Component implements OnInit {
 
   width = 400;
   height = 400;
-  cntCoords = 100;
+  cntCoords = 60;
+  cntVectorsForProjection = 12;
   timerPeriod = 150;
   private circle: Circle;
   private coordsOnCircle: Coord2d[];
   private painter: Painter;
+  private vectorsForProjection: Coord2d[];
 
   constructor() {
   }
@@ -43,11 +45,14 @@ export class Circle0Component implements OnInit {
       center: {x: this.width / 2, y: this.height / 2}
     };
     this.coordsOnCircle = Mth.coordsOnCircle(this.cntCoords, this.circle.radius, this.circle.center);
+    this.vectorsForProjection = Mth.coordsOnCircle(this.cntVectorsForProjection,
+      this.circle.radius, this.circle.center);
 
     this.painter = new Painter(this.canvasRef.nativeElement.getContext('2d'));
     this.painter.clear(this.width, this.height);
     this.painter.drawCircle(this.circle);
-    this.painter.drawCoordsOnCircle(this.coordsOnCircle);
+    //this.painter.drawCoordsOnCircle(this.coordsOnCircle);
+    this.painter.drawLines(this.circle.center, this.vectorsForProjection, {strokeStyle: "blue"});
   }
 
   onChangeAnimate($event: MatButtonToggleChange) {
@@ -71,9 +76,26 @@ export class Circle0Component implements OnInit {
     this.painter.clear(this.width, this.height);
     this.painter.drawCircle(this.circle);
 
+    this.painter.drawLines(this.circle.center, this.vectorsForProjection, {strokeStyle: 'blue'});
+    // this.painter.drawLine(this.circle.center, this.vectorsForProjection[0], {strokeStyle: 'green'});
+
     const coordOnCircle = this.coordsOnCircle[idx % this.coordsOnCircle.length];
     this.painter.drawCoord(coordOnCircle, {fillStyle: 'blue'});
 
+    this.vectorsForProjection.forEach(vec => {
+      const coordOnVecProj = Mth.plus(this.circle.center,
+        Mth.projection(Mth.minus(coordOnCircle, this.circle.center),
+          Mth.minus(vec, this.circle.center)));
+      this.painter.drawCoord(coordOnVecProj, {fillStyle: 'green'});
+    });
+    this.painter.drawCoord(coordOnCircle, {fillStyle: 'blue'});
+    /*
+    const coordOnProjVect0 = Mth.plus(this.circle.center,
+      Mth.projection(Mth.minus(coordOnCircle, this.circle.center),
+        Mth.minus(this.vectorsForProjection[0], this.circle.center)));
+    this.painter.drawCoord(coordOnProjVect0, {fillStyle: 'green'});
+    */
+    /*
     const coordOnXAxis = {x: coordOnCircle.x, y: this.circle.center.y};
     this.painter.drawCoord(coordOnXAxis, {fillStyle: 'green'});
 
@@ -81,5 +103,6 @@ export class Circle0Component implements OnInit {
     this.painter.drawCoord(coordOnYAxis, {fillStyle: 'orange'});
 
     this.painter.drawLine(coordOnXAxis, coordOnYAxis);
+     */
   }
 }

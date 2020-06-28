@@ -35,10 +35,21 @@ export class Painter {
     this.ctx.fill();
   }
 
-  drawLine(c1: Coord2d, c2: Coord2d) {
+  drawLines(c: Coord2d, coords: Coord2d[], opts: PaintOpts) {
+    this.ctx.beginPath();
+    coords.forEach(coord => {
+      this.ctx.moveTo(c.x, c.y);
+      this.ctx.lineTo(coord.x, coord.y);
+      this.ctx.strokeStyle = opts.strokeStyle;
+      this.ctx.stroke();
+    });
+  }
+
+  drawLine(c1: Coord2d, c2: Coord2d, opts: PaintOpts) {
     this.ctx.beginPath();
     this.ctx.moveTo(c1.x, c1.y);
     this.ctx.lineTo(c2.x, c2.y);
+    this.ctx.strokeStyle = opts.strokeStyle;
     this.ctx.stroke();
   }
 }

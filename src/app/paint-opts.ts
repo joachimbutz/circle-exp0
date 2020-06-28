@@ -1,3 +1,4 @@
 export interface PaintOpts {
-  fillStyle: string;
+  fillStyle?: string;
+  strokeStyle?: string;
 }
