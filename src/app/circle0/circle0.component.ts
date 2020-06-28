@@ -3,6 +3,10 @@ import {MatSliderChange} from '@angular/material/slider';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 import {timer} from "rxjs";
 import {takeWhile} from "rxjs/operators";
+import {Mth} from "../mth";
+import {Circle} from "../circle";
+import {Coord2d} from "../coord2d";
+import {Painter} from "../painter";
 
 @Component({
   selector: 'app-circle0',
@@ -12,9 +16,15 @@ import {takeWhile} from "rxjs/operators";
 export class Circle0Component implements OnInit {
 
   @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
-  private animateToggle: string;
-  private _coords: Array<[number, number]>;
-  private _radius: number;
+  private animateToggle = 'off';
+
+  width = 400;
+  height = 400;
+  cntCoords = 100;
+  timerPeriod = 150;
+  private circle: Circle;
+  private coordsOnCircle: Coord2d[];
+  private painter: Painter;
 
   constructor() {
   }
@@ -28,78 +38,48 @@ export class Circle0Component implements OnInit {
 
   onInput($event: MatSliderChange) {
     console.log($event);
-    this.drawCircle($event.value);
-  }
+    this.circle = {
+      radius: $event.value,
+      center: {x: this.width / 2, y: this.height / 2}
+    };
+    this.coordsOnCircle = Mth.coordsOnCircle(this.cntCoords, this.circle.radius, this.circle.center);
 
-  private drawCircle(value: number) {
-    const ctx = this.canvasRef.nativeElement.getContext('2d');
-    const radius = value;
-    ctx.clearRect(0,0, 400, 400);
-    ctx.beginPath();
-    ctx.arc(200, 200, radius, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    const coords = this.coords(100, radius);
-    coords.forEach(coord => {
-      ctx.beginPath();
-      ctx.arc(coord[0], coord[1], 10, 0, 2 * Math.PI);
-      // ctx.arc(coord[0], coord[1], radius, 0, 2 * Math.PI);
-      ctx.stroke();
-    });
-    this._coords = coords;
-    this._radius = radius;
-  }
-
-  circleX(radian, radius) {
-    return Math.sin(radian) * radius;
-  }
-
-  circleY(radian, radius) {
-    return Math.cos(radian) * radius;
-  }
-
-  coords(nr, radius): Array<[number, number]> {
-    const coords = [];
-    const inc = (2 * Math.PI) / nr;
-    for (let i = 0; i < nr; ++i) {
-      const coord = [200 + this.circleX(inc * i, radius), 200 + this.circleY(inc * i, radius)];
-      coords.push(coord);
-    }
-    return coords;
+    this.painter = new Painter(this.canvasRef.nativeElement.getContext('2d'));
+    this.painter.clear(this.width, this.height);
+    this.painter.drawCircle(this.circle);
+    this.painter.drawCoordsOnCircle(this.coordsOnCircle);
   }
 
   onChangeAnimate($event: MatButtonToggleChange) {
     console.log($event);
+    const shouldStartAnimation = this.animateToggle === 'off' && $event.value === 'on';
     this.animateToggle = $event.value;
-    if (this.animateToggle === "on") {
-      timer(0, 100).pipe(takeWhile(() => this.animateToggle === "on"))
-        .subscribe(res => {
-          console.log(res);
-          this.drawCircle(this._radius);
-          this.drawCoord(res);
-        });
+    if (shouldStartAnimation) {
+      this.startAnimation();
     }
   }
 
-  private drawCoord(idx: number) {
-    const ctx = this.canvasRef.nativeElement.getContext('2d');
-    ctx.beginPath();
-    const coord = this._coords[idx % this._coords.length];
-    ctx.arc(coord[0], coord[1], 10, 0, 2 * Math.PI);
-    // ctx.arc(coord[0], coord[1], radius, 0, 2 * Math.PI);
-    ctx.fillStyle = 'blue';
-    ctx.fill();
-    ctx.beginPath();
-    ctx.fillStyle = 'green';
-    ctx.arc(coord[0], 200, 10, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.fillStyle = 'orange';
-    ctx.arc(200, coord[1], 10, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(coord[0], 200);
-    ctx.lineTo(200, coord[1]);
-    ctx.stroke();
+  startAnimation() {
+    timer(0, this.timerPeriod).pipe(takeWhile(() => this.animateToggle === "on"))
+      .subscribe(idx => {
+        this.animateStep(idx);
+      });
+  }
+
+  animateStep(idx: number) {
+    console.log(idx);
+    this.painter.clear(this.width, this.height);
+    this.painter.drawCircle(this.circle);
+
+    const coordOnCircle = this.coordsOnCircle[idx % this.coordsOnCircle.length];
+    this.painter.drawCoord(coordOnCircle, {fillStyle: 'blue'});
+
+    const coordOnXAxis = {x: coordOnCircle.x, y: this.circle.center.y};
+    this.painter.drawCoord(coordOnXAxis, {fillStyle: 'green'});
+
+    const coordOnYAxis = {x: this.circle.center.y, y: coordOnCircle.y}
+    this.painter.drawCoord(coordOnYAxis, {fillStyle: 'orange'});
+
+    this.painter.drawLine(coordOnXAxis, coordOnYAxis);
   }
 }
