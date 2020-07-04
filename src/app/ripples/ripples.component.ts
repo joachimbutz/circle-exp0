@@ -3,6 +3,7 @@ import {Buffer} from "../buffer";
 import {timer} from "rxjs";
 import {takeWhile} from "rxjs/operators";
 import {MatButtonToggleChange} from "@angular/material/button-toggle";
+import {MatSliderChange} from "@angular/material/slider";
 
 @Component({
   selector: 'app-ripples',
@@ -19,7 +20,7 @@ export class RipplesComponent implements OnInit, AfterViewInit {
   current: Buffer = new Buffer(this.width, this.height);
   previous: Buffer = new Buffer(this.width, this.height);
 
-  damping: number = 0.9999999999999;
+  damping: number = 0.999;
   timerPeriod = 100;
 
   animateToggle = 'off';
@@ -112,4 +113,7 @@ export class RipplesComponent implements OnInit, AfterViewInit {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
 
+  onChangeDamping($event: MatSliderChange) {
+    this.damping = $event.value;
+  }
 }
