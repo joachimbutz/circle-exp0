@@ -11,7 +11,7 @@ import {Painter} from "../painter";
 @Component({
   selector: 'app-circle0',
   templateUrl: './circle0.component.html',
-  styleUrls: ['./circle0.component.sass']
+  styleUrls: ['./circle0.component.scss']
 })
 export class Circle0Component implements OnInit {
 

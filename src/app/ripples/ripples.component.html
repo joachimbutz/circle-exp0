@@ -1,0 +1,12 @@
+<canvas (click)="pebble($event)" (mousemove)="pebble($event)" #canvas id="canvas" width="400" height="400">
+</canvas>
+<div>
+  <button mat-button (click)="animateStep()">AnimateStep</button>
+</div>
+<div>
+  Animate:
+  <mat-button-toggle-group name="animate" aria-label="animate">
+    <mat-button-toggle value="on" (change)="onChangeAnimate($event)">on</mat-button-toggle>
+    <mat-button-toggle value="off" (change)="onChangeAnimate($event)">off</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
