@@ -9,12 +9,15 @@ import { MatSliderModule } from '@angular/material/slider'
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { RipplesComponent } from './ripples/ripples.component'
 import {MatButtonModule} from "@angular/material/button";
+import {HighchartsChartModule} from "highcharts-angular";
+import { TimeseriesComponent } from './timeseries/timeseries.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     Circle0Component,
-    RipplesComponent
+    RipplesComponent,
+    TimeseriesComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +25,8 @@ import {MatButtonModule} from "@angular/material/button";
     BrowserAnimationsModule,
     MatSliderModule,
     MatButtonModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    HighchartsChartModule
   ],
   providers: [],
   bootstrap: [AppComponent]

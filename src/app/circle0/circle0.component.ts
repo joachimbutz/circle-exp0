@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatSliderChange} from '@angular/material/slider';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 import {timer} from "rxjs";
@@ -13,7 +13,7 @@ import {Painter} from "../painter";
   templateUrl: './circle0.component.html',
   styleUrls: ['./circle0.component.scss']
 })
-export class Circle0Component implements OnInit {
+export class Circle0Component implements OnInit, AfterViewInit {
 
   @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
   private animateToggle = 'off';
@@ -23,6 +23,7 @@ export class Circle0Component implements OnInit {
   cntCoords = 60;
   cntVectorsForProjection = 12;
   timerPeriod = 150;
+  radius = 100;
   private circle: Circle;
   private coordsOnCircle: Coord2d[];
   private painter: Painter;
@@ -34,11 +35,7 @@ export class Circle0Component implements OnInit {
   ngOnInit(): void {
   }
 
-  onChange($event: any) {
-    console.log($event);
-  }
-
-  onInput($event: MatSliderChange) {
+  /*onInput($event: MatSliderChange) {
     console.log($event);
     this.circle = {
       radius: $event.value,
@@ -53,7 +50,7 @@ export class Circle0Component implements OnInit {
     this.painter.drawCircle(this.circle);
     //this.painter.drawCoordsOnCircle(this.coordsOnCircle);
     this.painter.drawLines(this.circle.center, this.vectorsForProjection, {strokeStyle: "blue"});
-  }
+  }*/
 
   onChangeAnimate($event: MatButtonToggleChange) {
     console.log($event);
@@ -104,5 +101,21 @@ export class Circle0Component implements OnInit {
 
     this.painter.drawLine(coordOnXAxis, coordOnYAxis);
      */
+  }
+
+  ngAfterViewInit(): void {
+    this.circle = {
+      radius: this.radius,
+      center: {x: this.width / 2, y: this.height / 2}
+    };
+    this.coordsOnCircle = Mth.coordsOnCircle(this.cntCoords, this.circle.radius, this.circle.center);
+    this.vectorsForProjection = Mth.coordsOnCircle(this.cntVectorsForProjection,
+      this.circle.radius, this.circle.center);
+
+    this.painter = new Painter(this.canvasRef.nativeElement.getContext('2d'));
+    this.painter.clear(this.width, this.height);
+    this.painter.drawCircle(this.circle);
+    //this.painter.drawCoordsOnCircle(this.coordsOnCircle);
+    this.painter.drawLines(this.circle.center, this.vectorsForProjection, {strokeStyle: "blue"});
   }
 }

@@ -1,0 +1,19 @@
+<div class="full-left">
+  <h4>Timeseries</h4>
+  <div class="medium-right">
+    <highcharts-chart
+      [Highcharts]="Highcharts"
+      [constructorType]="'stockChart'"
+      [options]="chart"
+      (chartInstance)="memChartInstance($event)"
+      [runOutsideAngular]="'true'"
+      style="width: 100%; height: 350px; display: block;"
+    ></highcharts-chart>
+  </div>
+</div>
+<!--<button mat-button (click)="addValue()">Add Value</button>-->
+Animate:
+<mat-button-toggle-group name="animate" aria-label="animate">
+  <mat-button-toggle value="on" (change)="onChangeAnimate($event)">on</mat-button-toggle>
+  <mat-button-toggle value="off" (change)="onChangeAnimate($event)">off</mat-button-toggle>
+</mat-button-toggle-group>
